@@ -35,13 +35,31 @@ class AssetsManager {
 	 * @since PageFlash 1.0.0
 	 */
 	public function pageflash_wp_default_scripts( $scripts ) {
-		$min_suffix        = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$quicklink_version = defined( 'PAGEFLASH_VERSION' ) && empty( PAGEFLASH_VERSION ) ? '' : '2.3.0';
-		$scripts->add( 'pageflash-quicklink', PAGEFLASH_ASSETS_URL . 'libs/quicklink/dist/quicklink.umd.js', array(), $quicklink_version, true );
-		$scripts->add( 'pageflash-frontend', PAGEFLASH_ASSETS_URL . 'js/frontend/pageflash-frontend' . $min_suffix . '.js', array(), PAGEFLASH_VERSION, true );
+		// Define the version for Quicklink, falling back to a default version if not set
+		$quicklink_version = defined( 'PAGEFLASH_VERSION' ) && !empty( PAGEFLASH_VERSION ) ? PAGEFLASH_VERSION : '2.3.0';
+		
+		// Include the asset file for script dependencies and version
+		$script_asset = include PAGEFLASH_PATH . 'build/quicklink/quicklink.asset.php';
+		$scripts->add( 
+			'pageflash-quicklink', 
+			PAGEFLASH_ASSETS_URL . 'libs/quicklink/dist/quicklink.umd.js', 
+			array(), 
+			$quicklink_version, 
+			true 
+		);
+		
+		if (is_array($script_asset) && isset($script_asset['dependencies'], $script_asset['version'])) {
+			$scripts->add(
+				'pageflash-frontend',
+				PAGEFLASH_URL . 'build/quicklink/quicklink.js',
+				$script_asset['dependencies'],
+				$script_asset['version'],
+				true
+			);
+		} 
 		return $scripts;
 	}
-
+	
 	/**
 	 * Enqueue scripts and styles for the PageFlash plugin frontend.
 	 *
@@ -51,11 +69,8 @@ class AssetsManager {
 	 * @since PageFlash 1.0.0
 	 */
 	public function pageflash_frontend_assets() {
-
-		$min_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_style( 'pageflash-frontend', PAGEFLASH_ASSETS_URL . 'css/frontend' . $min_suffix . '.css', array(), PAGEFLASH_VERSION );
 		wp_enqueue_script( 'pageflash-frontend' );
-		// wp_enqueue_script('pageflash-quicklink');
+		wp_enqueue_script('pageflash-quicklink');
 	}
 
 	/**
@@ -68,25 +83,6 @@ class AssetsManager {
 	 */
 	public function pageflash_admin_enqueue_scripts() {
 
-		$min_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'wp-color-picker' );
-		wp_enqueue_script( 'jquery' );
-
-		wp_enqueue_script(
-			'pageflash-admin',
-			PAGEFLASH_ASSETS_URL . 'js/admin/pageflash-admin' . $min_suffix . '.js',
-			array( 'jquery' ),
-			PAGEFLASH_VERSION,
-			true
-		);
-
-		wp_enqueue_style( 'wp-color-picker' );
-
-		wp_enqueue_style(
-			'pageflash-admin',
-			PAGEFLASH_ASSETS_URL . 'css/admin' . $min_suffix . '.css',
-			array(),
-			PAGEFLASH_VERSION
-		);
+		
 	}
 }

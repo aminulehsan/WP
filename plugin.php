@@ -4,7 +4,7 @@ namespace PageFlash;
 
 use PageFlash\AssetsManager\AssetsManager;
 use PageFlash\Admin\Admin;
-use PageFlash\Landmark\NoMoreReload\NoMoreReload;
+use PageFlash\Landmark\NoReload;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -107,7 +107,8 @@ final class Plugin {
 	 * @access private
 	 */
 	private function init_landmark() {
-		new NoMoreReload();
+		new NoReload\Quicklink();
+		new NoReload\NoReload();
 	}
 
 	/**
