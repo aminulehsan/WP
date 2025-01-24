@@ -45,7 +45,7 @@ class Quicklink {
 		$current_request_uri = esc_url_raw( $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$ignore_pattern      = $current_request_uri . '(#.*)?$/';
 
-		$pageflash_settings  = array(
+		$pageflash_settings = array(
 			'el'        => '', // CSS selector for in-viewport links to prefetch
 			'urls'      => array( site_url( '/' ) ), // Static array of URLs to prefetch.
 			'timeout'   => 2000,   // Set the timeout
@@ -68,7 +68,7 @@ class Quicklink {
 
 		// Apply filters
 		$pageflash_settings['ignores'] = apply_filters( 'wp_pageflash_quicklink_ignore_urls', $pageflash_settings['ignores'] );
-		$pageflash_settings = apply_filters( 'wp_pageflash_quicklink', $pageflash_settings );
+		$pageflash_settings            = apply_filters( 'wp_pageflash_quicklink', $pageflash_settings );
 
 		wp_localize_script( 'pageflash-frontend', 'pageflashSettings', $pageflash_settings );
 	}
@@ -89,9 +89,9 @@ class Quicklink {
 	 * @return string The modified script tag.
 	 */
 	public function pageflash_async_script_loader( $tag, $handle ) {
-		
+
 		$async_handles = array( 'pageflash-quicklink', 'pageflash-frontend' );
-		if ( in_array( $handle, $async_handles ) && false === strpos( $tag, 'async' )) {
+		if ( in_array( $handle, $async_handles ) && false === strpos( $tag, 'async' ) ) {
 			$tag = str_replace( '></script>', ' async></script>', $tag );
 		}
 

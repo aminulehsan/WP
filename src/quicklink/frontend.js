@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
+
 /**
  * PageFlash settings object.
  *
@@ -17,14 +18,14 @@
 /**
  * Initialize PageFlash on page load.
  * @since PageFlash 1.0.0
- * @listens load
+ * @listens window#load
  */
 window.addEventListener( 'load', () => {
 	const settings = window.pageflashSettings || {};
 	const listenerOptions = buildListenerOptions( settings );
 
 	// Initialize quicklink listener and prefetch URLs
-	quicklink.listen( listenerOptions );
+	window.quicklink.listen( listenerOptions );
 	prefetchUrls( settings );
 } );
 
@@ -143,6 +144,6 @@ function validateIgnores( ignores ) {
  */
 function prefetchUrls( settings ) {
 	if ( Array.isArray( settings.urls ) && settings.urls.length > 0 ) {
-		quicklink.prefetch( settings.urls );
+		window.quicklink.prefetch( settings.urls );
 	}
 }
