@@ -1,20 +1,20 @@
 <?php
 
-namespace PageFlash\Landmark\NoMoreReload;
+namespace PageFlash\Landmark\NoReload;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 /**
- * NoMoreReload Class.
+ * Quicklink Class.
  *
  * This class provides functionality for something in your PageFlash plugin.
  *
  * @package pageflash
  * @since PageFlash 1.0.0
  */
-class NoMoreReload {
+class Quicklink {
 
 	public function __construct() {
 		// Constructor code
@@ -44,7 +44,8 @@ class NoMoreReload {
 	public function pageflash_settings_config() {
 		$current_request_uri = esc_url_raw( $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$ignore_pattern      = $current_request_uri . '(#.*)?$/';
-		$pageflash_settings  = array(
+
+		$pageflash_settings = array(
 			'el'        => '', // CSS selector for in-viewport links to prefetch
 			'urls'      => array( site_url( '/' ) ), // Static array of URLs to prefetch.
 			'timeout'   => 2000,   // Set the timeout
@@ -64,6 +65,11 @@ class NoMoreReload {
 				$ignore_pattern,
 			), // Don't pre-fetch links to the admin since they could be nonce links.
 		);
+
+		// Apply filters
+		$pageflash_settings['ignores'] = apply_filters( 'wp_pageflash_quicklink_ignore_urls', $pageflash_settings['ignores'] );
+		$pageflash_settings            = apply_filters( 'wp_pageflash_quicklink', $pageflash_settings );
+
 		wp_localize_script( 'pageflash-frontend', 'pageflashSettings', $pageflash_settings );
 	}
 

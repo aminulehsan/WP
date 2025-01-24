@@ -11,9 +11,6 @@ defined( 'ABSPATH' ) || exit;
 	 */
 class Helper {
 
-	public static function pageflash_no_more_load_active() {
-	}
-
 	/**
 	 * Sanitize and return the content using wp_kses.
 	 *

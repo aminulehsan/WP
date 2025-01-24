@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
-import * as quicklink from 'quicklink';
-
 /**
  * PageFlash settings object.
  *
@@ -18,30 +16,16 @@ import * as quicklink from 'quicklink';
  */
 
 /**
- * Move PageFlash to the global scope.
- *
- * @type {Object}
- * @since PageFlash 1.0.0
- */
-window.pageflash = quicklink;
-const settings = window.pageflashSettings || {};
-
-/**
  * Initialize PageFlash on page load.
  * @since PageFlash 1.0.0
- * @listens load
+ * @listens window#load
  */
 window.addEventListener( 'load', () => {
-	/**
-	 * Build PageFlash listener options from user settings.
-	 *
-	 * @type {Object}
-	 */
+	const settings = window.pageflashSettings || {};
 	const listenerOptions = buildListenerOptions( settings );
-	pageflash.listen( listenerOptions );
-	/**
-	 * The option to prefetch urls from the options is as of version 1.0.0.
-	 */
+
+	// Initialize quicklink listener and prefetch URLs
+	window.quicklink.listen( listenerOptions );
 	prefetchUrls( settings );
 } );
 
@@ -74,58 +58,57 @@ function buildListenerOptions( settings ) {
  * @since PageFlash 1.0.0
  */
 function validateElement( selector ) {
-	if ( 'string' === typeof selector && selector.trim() !== '' ) {
-		return document.querySelector( selector );
-	}
-	return null; // or null, depending on your preference
+	return typeof selector === 'string' && selector.trim() !== ''
+		? document.querySelector( selector )
+		: null;
 }
 
 /**
  * Validate and get a number.
  *
  * @param {number} value - Number to validate.
- * @return {number| 2000} - Validated number or 2000 if not a number.
+ * @return {number} - Validated number or default (2000) if invalid.
  * @since PageFlash 1.0.0
  */
 function validateNumber( value ) {
-	return 'string' === typeof value ? Number( value ) : 2000;
+	return typeof value === 'string' ? Number( value ) : 2000;
 }
 
 /**
  * Validate and get a positive number.
  *
  * @param {number} value - Number to validate.
- * @return {number|Infinity} - Validated positive number or Infinity if not a positive number.
+ * @return {number} - Validated positive number or default (Infinity) if invalid.
  * @since PageFlash 1.0.0
  */
 function validatePositiveNumber( value ) {
-	return 'string' === typeof value && Number( value ) > 0 ? value : Infinity;
+	return typeof value === 'string' && Number( value ) > 0
+		? Number( value )
+		: Infinity;
 }
 
 /**
  * Validate and get a boolean.
  *
  * @param {boolean} value - Boolean to validate.
- * @return {boolean} - Validated boolean if not a boolean.
+ * @return {boolean} - Validated boolean or default (false) if invalid.
  * @since PageFlash 1.0.0
  */
 function validateBoolean( value ) {
-	return 'string' === typeof value && value !== '' ? true : false;
+	return typeof value === 'string' && value !== '' ? true : false;
 }
 
 /**
  * Get a function reference based on the function name.
  *
  * @param {string} functionName - Name of the function.
- * @return {Function | null} - Function reference or null if not a valid function.
+ * @return {Function|null} - Function reference or null if invalid.
  * @since PageFlash 1.0.0
  */
 function getFunctionReference( functionName ) {
-	return 'string' === typeof functionName &&
-		'function' === typeof window[ functionName ]
-		? function () {
-				return window[ functionName ].apply( window, arguments );
-		  }
+	return typeof functionName === 'string' &&
+		typeof window[ functionName ] === 'function'
+		? ( ...args ) => window[ functionName ]( ...args )
 		: null;
 }
 
@@ -133,7 +116,7 @@ function getFunctionReference( functionName ) {
  * Validate and get an array of origins.
  *
  * @param {Array} origins - Array of origin strings.
- * @return {Array| []} - Validated array of origins or [] if not a valid array.
+ * @return {Array} - Validated array of origins or default (empty array) if invalid.
  * @since PageFlash 1.0.0
  */
 function validateOrigins( origins ) {
@@ -143,8 +126,8 @@ function validateOrigins( origins ) {
 /**
  * Convert an array of ignores to an array of regular expressions.
  *
- * @param {Array} ignores - Array of ignores.
- * @return {Array| []} - Array of regular expressions or [] if not a valid array.
+ * @param {Array} ignores - Array of ignore patterns.
+ * @return {Array} - Array of regular expressions or default (empty array) if invalid.
  * @since PageFlash 1.0.0
  */
 function validateIgnores( ignores ) {
@@ -154,13 +137,13 @@ function validateIgnores( ignores ) {
 }
 
 /**
- * Prefetch deprecated urls.
+ * Prefetch URLs provided in settings.
  *
  * @param {PageFlashSettings} settings - User settings for PageFlash.
  * @since PageFlash 1.0.0
  */
 function prefetchUrls( settings ) {
 	if ( Array.isArray( settings.urls ) && settings.urls.length > 0 ) {
-		pageflash.prefetch( settings.urls );
+		window.quicklink.prefetch( settings.urls );
 	}
 }
