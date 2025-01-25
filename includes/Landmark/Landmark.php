@@ -1,2 +1,0 @@
-<?
-// Silence is golden.
