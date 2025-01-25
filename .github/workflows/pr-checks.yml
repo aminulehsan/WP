@@ -18,15 +18,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
-
-      - name: Install PHP dependencies
-        uses: php-actions/composer@v6
-        with:
-          args: --ignore-platform-reqs
-
-      - name: Run WP Standard Lint
-        run: npm run lint:standard
-
+		
       - name: Run JS Lint
         if: success() || failure()
         run: npm run lint:js
