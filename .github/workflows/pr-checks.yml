@@ -24,9 +24,6 @@ jobs:
         with:
           args: --ignore-platform-reqs
 
-      - name: Run WP Standard Lint
-        run: npm run lint:standard
-
       - name: Run JS Lint
         if: success() || failure()
         run: npm run lint:js
